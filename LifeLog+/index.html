@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My First HTML Page</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main id="pager" class="pager">
+
+  <!-- PAGE 1 — Categories -->
+  <section class="screen" id="page-1">
+    <h1>LifeLog+</h1>
+
+    <section class="section" id="categoriesSection">
+      <h2>Categories</h2>
+
+      <form class="category-form" id="categoryForm">
+        <input type="text" id="categoryName" placeholder="Category Name" required />
+        <label for="categoryColor">Color:</label>
+        <input type="color" id="categoryColor" value="#3b82f6" />
+        <button type="submit">Add Category</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th class="my-life-header">My Life</th>
+          </tr>
+        </thead>
+        <tbody id="categoryList"></tbody>
+      </table>
+    </section>
+  </section>
+
+  <!-- PAGE 2 — Logs Feed (filters + entry form + list) -->
+  <section class="screen" id="page-2">
+    <h1>LogLife+</h1>
+
+    <section class="section" id="entriesSection">
+      <h2>Entries</h2>
+
+      <div class="entry-filters">
+        <input type="text" id="searchText" placeholder="Search keyword" />
+
+        <select id="filterCategory">
+          <option value="">All categories</option>
+        </select>
+
+        <select id="filterTime">
+          <option value="all">Any time (newest first)</option>
+          <option value="1">Last 24 hours</option>
+          <option value="7">Last 7 days</option>
+          <option value="30">Last 30 days</option>
+        </select>
+      </div>
+
+      <!-- ✅ MOVED HERE: Entry form (Simple / Medium / Detailed / Category / Details etc.) -->
+      <form class="entry-form" id="entryForm">
+        <input type="text" id="entryText" placeholder="Title" required />
+
+        <select id="entryType" required>
+          <option value="Simple">Simple</option>
+          <option value="Medium">Medium</option>
+          <option value="Detailed">Detailed</option>
+        </select>
+
+        <select id="entryCategory">
+          <option value="">No category</option>
+        </select>
+
+        <textarea
+          id="entryNotes"
+          placeholder="Details, quotes, journal, workout breakdown, etc. (optional)"
+          rows="2"
+        ></textarea>
+
+        <input
+          type="text"
+          id="entryImage"
+          class="entry-extra-input"
+          placeholder="IMG path (e.g. media/chest-day-1.jpg) — optional"
+        />
+
+        <input
+          type="text"
+          id="entryVideo"
+          class="entry-extra-input"
+          placeholder="Video path (e.g. media/squats.mp4) — optional"
+        />
+
+        <button type="submit">Save Entry</button>
+      </form>
+
+      <ul id="entryList"></ul>
+    </section>
+  </section>
+
+  <!-- PAGE 3 — Quick Add Buttons ONLY -->
+  <section class="screen" id="page-3">
+    <h1>LogLife+</h1>
+
+    <section class="section">
+      <h2>Quick Add</h2>
+
+      <div class="quick-add-section">
+        <h3>Quick Add Hub</h3>
+        <p>Log something fast: note, full entry, picture, or video.</p>
+
+        <!-- ✅ BIGGER 2x2 GRID -->
+        <div class="quick-add-buttons">
+          <button class="qa-btn" data-type="note" type="button">Add Quick Note</button>
+          <button class="qa-btn" data-type="full" type="button">Add Full Entry</button>
+          <button class="qa-btn" data-type="picture" type="button">Add Picture</button>
+          <button class="qa-btn" data-type="video" type="button">Add Video</button>
+        </div>
+
+        <div id="quickAddModal" class="modal hidden">
+          <div class="modal-overlay"></div>
+          <div class="modal-content">
+            <button class="modal-close" type="button">&times;</button>
+            <h3 id="quickAddTitle">New Quick Note</h3>
+
+            <form id="quickAddForm">
+              <div class="quick-form-field">
+                <span>Text / Notes</span>
+                <textarea
+                  id="quickAddText"
+                  placeholder="What do you want to log?"
+                  required
+                ></textarea>
+              </div>
+
+              <div class="quick-form-field">
+                <span>Category</span>
+                <select id="quickAddCategory"></select>
+              </div>
+
+              <div class="quick-form-field">
+                <span>Media URL (optional)</span>
+                <input id="quickAddMedia" type="text" placeholder="img or video path / URL" />
+              </div>
+
+              <button type="submit" class="quick-primary-btn">Save Quick Entry</button>
+              <p id="quickAddError" class="error-message"></p>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </section>
+
+  <!-- PAGE 4 — Tracking & Patterns -->
+  <section class="screen" id="page-4">
+    <h1>LogLife+</h1>
+
+    <section class="section patterns-section" id="patternsSection">
+      <h3>Tracking &amp; Patterns</h3>
+      <p>See how often you log and which parts of your life are most active.</p>
+
+      <div class="patterns-cards">
+        <div class="pattern-card">
+          <div class="pattern-label">Entries in last 7 days</div>
+          <div class="pattern-number" id="statEntriesWeek">0</div>
+        </div>
+
+        <div class="pattern-card">
+          <div class="pattern-label">Entries in last 30 days</div>
+          <div class="pattern-number" id="statEntriesMonth">0</div>
+        </div>
+
+        <div class="pattern-card">
+          <div class="pattern-label">Most active category</div>
+          <div class="pattern-number" id="statMostCategory">–</div>
+          <div class="pattern-sub" id="statMostCategoryCount"></div>
+        </div>
+
+        <div class="pattern-card">
+          <div class="pattern-label">Least active category</div>
+          <div class="pattern-number" id="statLeastCategory">–</div>
+          <div class="pattern-sub" id="statLeastCategoryCount"></div>
+        </div>
+      </div>
+
+      <h4>Category breakdown</h4>
+      <div id="categoryBars" class="category-bars"></div>
+    </section>
+  </section>
+
+  <!-- PAGE 5 — Future Projections -->
+  <section class="screen" id="page-5">
+    <h1>LogLife+</h1>
+
+    <section class="section projections-section" id="projectionsSection">
+      <h3>Future Projections</h3>
+      <p>If you keep this up, your life will look like this…</p>
+
+      <div class="proj-controls">
+        <div class="proj-control">
+          <label for="projectionCategory">Focus category</label>
+          <select id="projectionCategory">
+            <option value="">All categories</option>
+          </select>
+        </div>
+
+        <div class="proj-control">
+          <label for="projectionMultiplier">What if you changed your consistency?</label>
+          <div class="proj-slider-row">
+            <input
+              type="range"
+              id="projectionMultiplier"
+              min="0.5"
+              max="2.0"
+              step="0.1"
+              value="1.0"
+            />
+            <span class="proj-mult-label" id="projectionMultiplierLabel">1.0×</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proj-cards">
+        <div class="proj-card">
+          <div class="proj-label">Next 30 days</div>
+          <div class="proj-number" id="proj30">0</div>
+          <div class="proj-sub" id="proj30Desc"></div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-label">Next 6 months</div>
+          <div class="proj-number" id="proj180">0</div>
+          <div class="proj-sub" id="proj180Desc"></div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-label">Next year</div>
+          <div class="proj-number" id="proj365">0</div>
+          <div class="proj-sub" id="proj365Desc"></div>
+        </div>
+      </div>
+
+      <p class="proj-note" id="projBaseInfo">Based on your last 30 days of activity.</p>
+    </section>
+  </section>
+
+</main>
+
+<!-- ✅ Icon-style bottom nav with placeholders -->
+<nav class="bottom-nav" aria-label="Page navigation">
+  <button type="button" class="nav-btn" data-go="0" aria-label="Categories">
+    <img class="nav-icon" src="https://files.catbox.moe/509n9m.png" alt="" />
+    <span class="nav-label">Categories</span>
+  </button>
+
+  <button type="button" class="nav-btn" data-go="1" aria-label="Feed">
+    <img class="nav-icon" src="https://files.catbox.moe/f7ydzu.png" alt="" />
+    <span class="nav-label">Feed</span>
+  </button>
+
+  <button type="button" class="nav-btn" data-go="2" aria-label="Quick Add">
+    <img class="nav-icon" src="https://files.catbox.moe/wx2ict.png" alt="" />
+    <span class="nav-label">Quick</span>
+  </button>
+
+  <button type="button" class="nav-btn" data-go="3" aria-label="Patterns">
+    <img class="nav-icon" src="https://files.catbox.moe/rvmcza.png" alt="" />
+    <span class="nav-label">Patterns</span>
+  </button>
+
+  <button type="button" class="nav-btn" data-go="4" aria-label="Future">
+    <img class="nav-icon" src="https://files.catbox.moe/4zjyfb.png" alt="" />
+    <span class="nav-label">Future</span>
+  </button>
+</nav>
+<script src="script.js" defer></script>
+</body>
+</html>
