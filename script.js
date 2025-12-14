@@ -4,8 +4,8 @@
 const STORAGE_KEY = "myTrackerState";
 
 let state = {
-  categories: [], // { id, name, color }
-  entries: []     // { id, text, type, category, notes, imagePath, videoPath, timestamp }
+  categories: [],
+  entries: []
 };
 
 function saveState() {
@@ -192,7 +192,6 @@ function deleteCategory(id) {
 
   state.categories = state.categories.filter(c => c.id !== id);
 
-  // Clear category links from entries for that category
   state.entries = state.entries.map(entry => {
     if (entry.category === cat.name) return { ...entry, category: "" };
     return entry;
@@ -266,7 +265,6 @@ function renderCategories() {
 }
 
 function refreshCategoryDropdowns() {
-  // Entry form category dropdown
   if (entryCategorySelect) {
     entryCategorySelect.innerHTML = '';
     const baseOption = document.createElement('option');
@@ -282,7 +280,6 @@ function refreshCategoryDropdowns() {
     });
   }
 
-  // Filter dropdown
   if (filterCategorySelect) {
     filterCategorySelect.innerHTML = '';
     const allOption = document.createElement('option');
@@ -298,7 +295,6 @@ function refreshCategoryDropdowns() {
     });
   }
 
-  // Projections dropdown
   if (projectionCategorySelect) {
     projectionCategorySelect.innerHTML = '';
     const allOpt = document.createElement('option');
@@ -313,6 +309,8 @@ function refreshCategoryDropdowns() {
       projectionCategorySelect.appendChild(opt);
     });
   }
+
+  populateQuickAddCategories();
 }
 
 // -------------------------
@@ -463,10 +461,8 @@ function renderEntries() {
       if (entry.videoPath && entry.videoPath.trim() !== '') {
         const video = document.createElement('video');
         video.controls = true;
-        const source = document.createElement('source');
-        source.src = entry.videoPath;
-        source.type = 'video/mp4';
-        video.appendChild(source);
+        video.playsInline = true;
+        video.src = entry.videoPath;
         mediaDiv.appendChild(video);
       }
 
@@ -635,7 +631,7 @@ function renderProjections() {
 }
 
 // -------------------------
-// QUICK ADD HUB LOGIC
+// QUICK ADD HUB LOGIC (+ photo/video picker)
 // -------------------------
 const quickAddButtons = document.querySelectorAll('.qa-btn');
 const quickAddModal = document.getElementById('quickAddModal');
@@ -650,6 +646,75 @@ const quickAddCloseBtn = quickAddModal ? quickAddModal.querySelector('.modal-clo
 const quickAddOverlay = quickAddModal ? quickAddModal.querySelector('.modal-overlay') : null;
 
 let currentQuickType = 'note';
+
+// Media picker elements
+const pickPhotoBtn = document.getElementById("pickPhotoBtn");
+const pickVideoBtn = document.getElementById("pickVideoBtn");
+const photoInput = document.getElementById("photoInput");
+const videoInput = document.getElementById("videoInput");
+const quickMediaPreview = document.getElementById("quickMediaPreview");
+
+let currentObjectUrl = null;
+let selectedMediaKind = ""; // "image" | "video" | ""
+
+function clearQuickMedia() {
+  if (currentObjectUrl) {
+    URL.revokeObjectURL(currentObjectUrl);
+    currentObjectUrl = null;
+  }
+  selectedMediaKind = "";
+  if (quickAddMediaInput) quickAddMediaInput.value = "";
+  if (quickMediaPreview) quickMediaPreview.innerHTML = "";
+  if (photoInput) photoInput.value = "";
+  if (videoInput) videoInput.value = "";
+}
+
+function showQuickMedia(file) {
+  clearQuickMedia();
+  currentObjectUrl = URL.createObjectURL(file);
+
+  if (quickAddMediaInput) quickAddMediaInput.value = currentObjectUrl;
+
+  if (!quickMediaPreview) return;
+
+  if (file.type.startsWith("image/")) {
+    selectedMediaKind = "image";
+    const img = document.createElement("img");
+    img.src = currentObjectUrl;
+    img.alt = "Selected photo";
+    quickMediaPreview.appendChild(img);
+  } else if (file.type.startsWith("video/")) {
+    selectedMediaKind = "video";
+    const vid = document.createElement("video");
+    vid.src = currentObjectUrl;
+    vid.controls = true;
+    vid.playsInline = true;
+    quickMediaPreview.appendChild(vid);
+  }
+
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.className = "quick-secondary-btn remove-media";
+  removeBtn.textContent = "Remove Media";
+  removeBtn.addEventListener("click", clearQuickMedia);
+  quickMediaPreview.appendChild(removeBtn);
+}
+
+if (pickPhotoBtn && photoInput) {
+  pickPhotoBtn.addEventListener("click", () => photoInput.click());
+  photoInput.addEventListener("change", () => {
+    const file = photoInput.files && photoInput.files[0];
+    if (file) showQuickMedia(file);
+  });
+}
+
+if (pickVideoBtn && videoInput) {
+  pickVideoBtn.addEventListener("click", () => videoInput.click());
+  videoInput.addEventListener("change", () => {
+    const file = videoInput.files && videoInput.files[0];
+    if (file) showQuickMedia(file);
+  });
+}
 
 function populateQuickAddCategories() {
   if (!quickAddCategorySelect) return;
@@ -678,15 +743,21 @@ function openQuickAdd(type) {
   if (quickAddTitle) quickAddTitle.textContent = label;
 
   if (quickAddText) quickAddText.value = '';
-  if (quickAddMediaInput) quickAddMediaInput.value = '';
   if (quickAddError) quickAddError.textContent = '';
 
+  clearQuickMedia();
   populateQuickAddCategories();
+
   if (quickAddModal) quickAddModal.classList.remove('hidden');
+
+  // Small UX: if user tapped Picture or Video, auto-open the correct picker
+  if (type === "picture" && photoInput) setTimeout(() => photoInput.click(), 150);
+  if (type === "video" && videoInput) setTimeout(() => videoInput.click(), 150);
 }
 
 function closeQuickAdd() {
   if (quickAddModal) quickAddModal.classList.add('hidden');
+  clearQuickMedia();
 }
 
 quickAddButtons.forEach(btn => {
@@ -716,10 +787,16 @@ if (quickAddForm) {
 
     let imagePath = '';
     let videoPath = '';
+
+    // Prefer what the picker selected (blob URLs) for testing
     if (media) {
-      const lower = media.toLowerCase();
-      if (lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.mov')) videoPath = media;
-      else imagePath = media;
+      if (selectedMediaKind === "video") videoPath = media;
+      else if (selectedMediaKind === "image") imagePath = media;
+      else {
+        const lower = media.toLowerCase();
+        if (lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.mov')) videoPath = media;
+        else imagePath = media;
+      }
     }
 
     addEntry(text, entryTypeLabel, category, '', imagePath, videoPath);
