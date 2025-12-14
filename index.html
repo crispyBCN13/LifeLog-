@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My First HTML Page</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LogLife+</title>
+  <link rel="stylesheet" href="styles.css" />
+  
 </head>
+
 <body>
-    <main id="pager" class="pager">
+
+<main id="pager" class="pager">
 
   <!-- PAGE 1 — Categories -->
   <section class="screen" id="page-1">
@@ -56,7 +59,6 @@
         </select>
       </div>
 
-      <!-- ✅ MOVED HERE: Entry form (Simple / Medium / Detailed / Category / Details etc.) -->
       <form class="entry-form" id="entryForm">
         <input type="text" id="entryText" placeholder="Title" required />
 
@@ -108,7 +110,6 @@
         <h3>Quick Add Hub</h3>
         <p>Log something fast: note, full entry, picture, or video.</p>
 
-        <!-- ✅ BIGGER 2x2 GRID -->
         <div class="quick-add-buttons">
           <button class="qa-btn" data-type="note" type="button">Add Quick Note</button>
           <button class="qa-btn" data-type="full" type="button">Add Full Entry</button>
@@ -138,8 +139,23 @@
               </div>
 
               <div class="quick-form-field">
-                <span>Media URL (optional)</span>
-                <input id="quickAddMedia" type="text" placeholder="img or video path / URL" />
+                <span>Media (optional)</span>
+
+                <div class="quick-media-actions">
+                  <button id="pickPhotoBtn" class="quick-secondary-btn" type="button">
+                    Choose / Take Photo
+                  </button>
+                  <input id="photoInput" type="file" accept="image/*" hidden />
+
+                  <button id="pickVideoBtn" class="quick-secondary-btn" type="button">
+                    Choose / Record Video
+                  </button>
+                  <input id="videoInput" type="file" accept="video/*" hidden />
+                </div>
+
+                <div id="quickMediaPreview" class="media-preview"></div>
+
+                <input id="quickAddMedia" type="hidden" />
               </div>
 
               <button type="submit" class="quick-primary-btn">Save Quick Entry</button>
@@ -247,7 +263,6 @@
 
 </main>
 
-<!-- ✅ Icon-style bottom nav with placeholders -->
 <nav class="bottom-nav" aria-label="Page navigation">
   <button type="button" class="nav-btn" data-go="0" aria-label="Categories">
     <img class="nav-icon" src="https://files.catbox.moe/509n9m.png" alt="" />
@@ -274,7 +289,6 @@
     <span class="nav-label">Future</span>
   </button>
 </nav>
-<script src="script.js" defer></script>
+  <script defer src="script.js"></script>
 </body>
 </html>
-
