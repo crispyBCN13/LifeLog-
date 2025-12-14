@@ -77,8 +77,6 @@ body {
   height: 26px;
   border-radius: 8px;
   object-fit: cover;
-
-  /* If you haven't pasted icons yet, this gives you a nice placeholder box */
   background: rgba(255,255,255,0.18);
   border: 1px solid rgba(255,255,255,0.14);
 }
@@ -327,7 +325,7 @@ th, td {
   margin-bottom: 16px;
 }
 
-/* ✅ Bigger 2x2 grid */
+/* Bigger 2x2 grid */
 .quick-add-buttons {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -471,6 +469,42 @@ th, td {
   font-size: 0.8rem;
   color: #f97373;
   min-height: 1em;
+}
+
+/* ===== Added for phone picker buttons + preview ===== */
+.quick-secondary-btn {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.quick-secondary-btn:hover {
+  background: rgba(255,255,255,0.10);
+}
+
+.quick-media-actions {
+  width: 100%;
+  display: grid;
+  gap: 8px;
+}
+
+.media-preview {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.media-preview img,
+.media-preview video {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 10px;
+  display: block;
+  margin-top: 8px;
 }
 
 /* Patterns + Projections (unchanged) */
